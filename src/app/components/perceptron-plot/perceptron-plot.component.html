@@ -1,0 +1,50 @@
+<mat-card>
+  <mat-card-title>Perceptrón - Visualizador</mat-card-title>
+  <mat-card-subtitle>
+    Puntos fijos de ejemplo, puedes jugar con W1, W2 y B.
+  </mat-card-subtitle>
+
+  <mat-card-content>
+    <div class="controls">
+      <mat-form-field appearance="outline">
+        <mat-label>W1</mat-label>
+        <input
+          matInput
+          type="number"
+          [(ngModel)]="w1"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>W2</mat-label>
+        <input
+          matInput
+          type="number"
+          [(ngModel)]="w2"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>B</mat-label>
+        <input
+          matInput
+          type="number"
+          [(ngModel)]="b"
+        />
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="onApply()">
+        Actualizar
+      </button>
+    </div>
+
+    <div class="chart-container">
+      <canvas
+        baseChart
+        [data]="chartData"
+        [options]="chartOptions"
+        type="scatter">
+      </canvas>
+    </div>
+  </mat-card-content>
+</mat-card>

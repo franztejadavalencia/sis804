@@ -1,0 +1,22 @@
+mat-card {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  mat-form-field {
+    width: 120px;
+  }
+}
+
+.chart-container {
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+}
+
