@@ -4,7 +4,7 @@ import {
   ChartOptions,
 } from 'chart.js';
 
-interface LabeledPoint {
+interface Punto {
   x: number;
   y: number;
   t: 0 | 1;
@@ -17,7 +17,7 @@ interface LabeledPoint {
   styleUrl: './perceptron-plot.component.scss',
 })
 export class PerceptronPlotComponent implements OnInit {
-  points: LabeledPoint[] = [
+  puntos: Punto[] = [
     { x: 1,  y: -2, t: 1 },
     { x: 2,  y:  2, t: 1 },
     { x: -2, y:  2, t: 1 },
@@ -26,30 +26,35 @@ export class PerceptronPlotComponent implements OnInit {
     { x: -4, y:  0, t: 0 },
   ];
 
-  w1 = 2;
-  w2 = -1;
-  b  = 2;
+  wX = -2;
+  wY = -3;
+  b  = -2;
+  ejeBias: 'x' | 'y' = 'y';
 
-  // Datos y opciones del gráfico
   public chartData: ChartConfiguration<'scatter'>['data'] = {
     datasets: [],
   };
 
   public chartOptions: ChartOptions<'scatter'> = {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
+    aspectRatio: 1,
     scales: {
       x: {
         type: 'linear',
         position: 'bottom',
-        grid: {
-          display: true, 
+        min: -10,
+        max: 10,
+        ticks: {
+          stepSize: 1,
         },
       },
       y: {
         type: 'linear',
-        grid: {
-          display: true, 
+        min: -10,
+        max: 10,
+        ticks: {
+          stepSize: 1,
         },
       },
     },
@@ -64,59 +69,90 @@ export class PerceptronPlotComponent implements OnInit {
     this.updateChart();
   }
 
-  // ----- Lógica para recalcular las series -----
   updateChart(): void {
-    if (this.w2 === 0) {
-      // evitar división por cero; puedes manejarlo mejor luego
-      this.w2 = 0.0001;
+    if (this.wY === 0) {
+      this.wY = 0.0001;
     }
 
-    const class0 = this.points
+    const class0 = this.puntos
       .filter((p) => p.t === 0)
       .map((p) => ({ x: p.x, y: p.y }));
 
-    const class1 = this.points
+    const class1 = this.puntos
       .filter((p) => p.t === 1)
       .map((p) => ({ x: p.x, y: p.y }));
 
-    // Rango de X para dibujar las rectas
-    const xs = this.points.map((p) => p.x).concat([0, this.w1]);
-    const minX = Math.min(...xs) - 1;
-    const maxX = Math.max(...xs) + 1;
+    const minX = -10;
+    const maxX = 10;
+    const minY = -10;
+    const maxY = 10;
 
-    // Recta perpendicular por el origen (B = 0): w1*x + w2*y = 0
-    // => y = -(w1/w2) * x
-    const originLine = [
-      { x: minX, y: -(this.w1 / this.w2) * minX },
-      { x: maxX, y: -(this.w1 / this.w2) * maxX },
-    ];
+    // Pendiente de la recta perpendicular a W
+    const m = -(this.wX / this.wY);
 
-    // Recta con bias real del perceptrón: w1*x + w2*y + b = 0
-    // => y = -(w1/w2)*x - b/w2
-    const biasLine = [
-      { x: minX, y: -(this.w1 / this.w2) * minX - this.b / this.w2 },
-      { x: maxX, y: -(this.w1 / this.w2) * maxX - this.b / this.w2 },
-    ];
+    // Recta perpendicular por el origen (B = 0): wX*x + wY*y = 0
+    // => y = m * x
+    const lineaOrigen =  [
+    { x: minX, y: m * minX },
+    { x: maxX, y: m * maxX },
+  ];
 
-    // Vector W desde el origen hasta (w1, w2)
+    // Recta con bias real del perceptrón: wX*x + wY*y + b = 0
+    // => y = m*x - b/wY
+    let lineaBias: { x: number; y: number }[];
+    if (this.ejeBias === 'x') {
+      // Recta con pendiente m que pasa por (B, 0)
+      // y = m (x - B)
+      const bx = this.b;
+      lineaBias = [
+        { x: minX, y: m * (minX - bx) },
+        { x: maxX, y: m * (maxX - bx) },
+      ];
+    } else {
+      // Recta con pendiente m que pasa por (0, B)
+      // y = m x + B
+      const by = this.b;
+      lineaBias = [
+        { x: minX, y: m * minX + by },
+        { x: maxX, y: m * maxX + by },
+      ];
+    }
+
+    // Vector W desde el origen hasta (wX, wY)
     const wVector = [
       { x: 0, y: 0 },
-      { x: this.w1, y: this.w2 },
+      { x: this.wX, y: this.wY },
+    ];
+
+    const ejeX = [
+      { x: minX, y: 0 },
+      { x: maxX, y: 0 },
+    ];
+
+    const ejeY = [
+      { x: 0, y: minY },
+      { x: 0, y: maxY },
     ];
 
     this.chartData = {
       datasets: [
         {
-          label: 'Clase 0',
+          label: 't = 0',
           data: class0,
-          pointRadius: 5,
+          pointRadius: 4,
           pointStyle: 'circle',
+          showLine: false,
+          backgroundColor: '#ff0000',
+          borderColor: '#ff0000',
         },
         {
-          label: 'Clase 1',
+          label: 't = 1',
           data: class1,
-          pointRadius: 5,
-          pointStyle: 'rect',
+          pointRadius: 4,
+          pointStyle: 'circle',
+          showLine: false,
+          backgroundColor: '#0000ff',
+          borderColor: '#0000ff',
         },
         {
           label: 'Vector W',
@@ -124,26 +160,49 @@ export class PerceptronPlotComponent implements OnInit {
           showLine: true,
           pointRadius: 3,
           borderWidth: 2,
+          backgroundColor: 'rgba(0, 200, 255, 1)',
+          borderColor: 'rgba(0, 200, 255, 1)',
         },
         {
-          label: 'Recta B=0',
-          data: originLine,
+          label: 'Perpendicular',
+          data: lineaOrigen,
           showLine: true,
           pointRadius: 0,
           borderWidth: 1,
+          borderColor: '#6c757d',
+          backgroundColor: '#6c757d',
         },
         {
-          label: 'Recta con bias',
-          data: biasLine,
+          label: 'Paralela con bias',
+          data: lineaBias,
           showLine: true,
           pointRadius: 0,
           borderWidth: 2,
+          borderColor: '#f7993b',
+          backgroundColor: '#f7993b',
+        },
+        {
+          label: 'Eje X',
+          data: ejeX,
+          showLine: true,
+          pointRadius: 0,
+          borderWidth: 1.5,
+          borderColor: 'black',
+          backgroundColor: 'black',
+        },
+        {
+          label: 'Eje Y',
+          data: ejeY,
+          showLine: true,
+          pointRadius: 0,
+          borderWidth: 1.5,
+          borderColor: 'black',
+          backgroundColor: 'black',
         },
       ],
     };
   }
 
-  // botón para actualizar al cambiar inputs
   onApply(): void {
     this.updateChart();
   }

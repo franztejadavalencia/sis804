@@ -15,11 +15,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
+import { PerceptronCalcComponent } from './components/perceptron-calc/perceptron-calc.component';
 
 @NgModule({
   declarations: [
     App,
     PerceptronPlotComponent,
+    PerceptronCalcComponent,
   ],
   imports: [
     BrowserModule,

@@ -7,20 +7,20 @@
   <mat-card-content>
     <div class="controls">
       <mat-form-field appearance="outline">
-        <mat-label>W1</mat-label>
+        <mat-label>WX</mat-label>
         <input
           matInput
           type="number"
-          [(ngModel)]="w1"
+          [(ngModel)]="wX"
         />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>W2</mat-label>
+        <mat-label>WY</mat-label>
         <input
           matInput
           type="number"
-          [(ngModel)]="w2"
+          [(ngModel)]="wY"
         />
       </mat-form-field>
 
@@ -32,6 +32,14 @@
           [(ngModel)]="b"
         />
       </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Bias en eje</mat-label>
+        <mat-select [(ngModel)]="ejeBias">
+        <mat-option value="x">Usar B en X (B, 0)</mat-option>
+        <mat-option value="y">Usar B en Y (0, B)</mat-option>
+        </mat-select>
+    </mat-form-field>
 
       <button mat-raised-button color="primary" (click)="onApply()">
         Actualizar

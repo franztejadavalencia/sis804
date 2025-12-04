@@ -1,0 +1,42 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  mat-form-field {
+    width: 160px;
+  }
+}
+
+.points-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.points-table th,
+.points-table td {
+  padding: 4px 8px;
+  text-align: center;
+}
+
+.points-table thead tr {
+  border-bottom: 1px solid #ccc;
+}
+
+.points-table tbody tr:nth-child(odd) {
+  background-color: #fafafa;
+}
+
+.small-field {
+  width: 100px;
+}
+
+.t-badge {
+  display: inline-block;
+  min-width: 40px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: #eee;
+  font-weight: 500;
+}

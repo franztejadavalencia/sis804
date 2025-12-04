@@ -1,0 +1,80 @@
+<mat-card>
+  <mat-card-title>Configuración de puntos</mat-card-title>
+
+  <mat-card-content>
+
+    <!-- Cantidad de puntos -->
+    <div class="controls">
+      <mat-form-field appearance="outline">
+        <mat-label>Cantidad de puntos</mat-label>
+        <input
+          matInput
+          type="number"
+          min="2"
+          step="2"
+          [value]="cantPuntos()"
+          (input)="onCambiarCantidad($event)"
+        />
+      </mat-form-field>
+
+      <button mat-raised-button color="accent" (click)="onInvertirT()">
+        Invertir t (primera mitad = {{ primerMitadT() }})
+      </button>
+    </div>
+
+    <table class="points-table">
+    <thead>
+        <tr>
+        <th>Punto</th>
+        <th>X</th>
+        <th>Y</th>
+        <th>t</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (punto of puntos(); track $index) {
+        <tr>
+            <td>P{{ $index + 1 }}</td>
+
+            <td>
+            <mat-form-field appearance="outline" class="small-field">
+                <input
+                matInput
+                type="number"
+                [ngModel]="punto.x"
+                (ngModelChange)="onChangeX($index, $event)"
+                />
+            </mat-form-field>
+            </td>
+
+            <td>
+            <mat-form-field appearance="outline" class="small-field">
+                <input
+                matInput
+                type="number"
+                [ngModel]="punto.y"
+                (ngModelChange)="onChangeY($index, $event)"
+                />
+            </mat-form-field>
+            </td>
+
+            <td>
+            <span class="t-badge">
+                t = {{ punto.t }}
+            </span>
+            </td>
+        </tr>
+        }
+    </tbody>
+    </table>
+
+
+  </mat-card-content>
+</mat-card>
+
+<br />
+
+<!-- Componente de gráfico, recibe puntos con t -->
+<!-- <app-perceptron-plot
+  [points]="puntosValidos()">
+</app-perceptron-plot> -->
