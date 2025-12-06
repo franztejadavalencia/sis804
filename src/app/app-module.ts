@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatChipsModule } from '@angular/material/chips';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
 import { PerceptronCalcComponent } from './components/perceptron-calc/perceptron-calc.component';
@@ -37,6 +38,7 @@ import { PerceptronCalcComponent } from './components/perceptron-calc/perceptron
     MatSelectModule,
     MatToolbarModule,
     NgChartsModule,
+    MatChipsModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners()

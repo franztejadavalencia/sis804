@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import {
   ChartConfiguration,
   ChartOptions,
@@ -9,6 +9,7 @@ interface Punto {
   y: number;
   t: 0 | 1;
 }
+type Estados = '' | 'separados' | 'no_separados' | 'alcanzo_limite';
 
 @Component({
   selector: 'app-perceptron-plot',
@@ -16,20 +17,15 @@ interface Punto {
   templateUrl: './perceptron-plot.component.html',
   styleUrl: './perceptron-plot.component.scss',
 })
-export class PerceptronPlotComponent implements OnInit {
-  puntos: Punto[] = [
-    { x: 1,  y: -2, t: 1 },
-    { x: 2,  y:  2, t: 1 },
-    { x: -2, y:  2, t: 1 },
-    { x: 1,  y: -4, t: 0 },
-    { x: -3, y: -4, t: 0 },
-    { x: -4, y:  0, t: 0 },
-  ];
+export class PerceptronPlotComponent implements OnChanges, OnInit {
+  @Input() puntos: Punto[] = [];
 
-  wX = -2;
-  wY = -3;
-  b  = -2;
-  ejeBias: 'x' | 'y' = 'y';
+  @Input() wX = 0;
+  @Input() wY = 0;
+  @Input() b = 0;
+  @Input() ejeBias: 'x' | 'y' = 'x';
+  @Input() estadoCalculo: Estados = 'no_separados';
+  @Input() nroIteraciones = 0;
 
   public chartData: ChartConfiguration<'scatter'>['data'] = {
     datasets: [],
@@ -69,16 +65,18 @@ export class PerceptronPlotComponent implements OnInit {
     this.updateChart();
   }
 
-  updateChart(): void {
-    if (this.wY === 0) {
-      this.wY = 0.0001;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['points'] || changes['wX'] || changes['wY'] || changes['b'] || changes['ejeBias']) {
+      this.updateChart();
     }
+  }
 
-    const class0 = this.puntos
+  updateChart(): void {
+    const clase0 = this.puntos
       .filter((p) => p.t === 0)
       .map((p) => ({ x: p.x, y: p.y }));
 
-    const class1 = this.puntos
+    const clase1 = this.puntos
       .filter((p) => p.t === 1)
       .map((p) => ({ x: p.x, y: p.y }));
 
@@ -88,7 +86,11 @@ export class PerceptronPlotComponent implements OnInit {
     const maxY = 10;
 
     // Pendiente de la recta perpendicular a W
-    const m = -(this.wX / this.wY);
+    // const m = -(this.wX / this.wY);
+    let m = 0;
+    if (this.wY !== 0) {
+      m = -(this.wX / this.wY);
+    }
 
     // Recta perpendicular por el origen (B = 0): wX*x + wY*y = 0
     // => y = m * x
@@ -138,7 +140,7 @@ export class PerceptronPlotComponent implements OnInit {
       datasets: [
         {
           label: 't = 0',
-          data: class0,
+          data: clase0,
           pointRadius: 4,
           pointStyle: 'circle',
           showLine: false,
@@ -147,7 +149,7 @@ export class PerceptronPlotComponent implements OnInit {
         },
         {
           label: 't = 1',
-          data: class1,
+          data: clase1,
           pointRadius: 4,
           pointStyle: 'circle',
           showLine: false,
@@ -155,7 +157,7 @@ export class PerceptronPlotComponent implements OnInit {
           borderColor: '#0000ff',
         },
         {
-          label: 'Vector W',
+          label: 'Pesos W',
           data: wVector,
           showLine: true,
           pointRadius: 3,
@@ -164,7 +166,7 @@ export class PerceptronPlotComponent implements OnInit {
           borderColor: 'rgba(0, 200, 255, 1)',
         },
         {
-          label: 'Perpendicular',
+          label: 'Perpendicular de W',
           data: lineaOrigen,
           showLine: true,
           pointRadius: 0,

@@ -1,13 +1,13 @@
+<br>
+<br>
 <mat-card>
-  <mat-card-title>Perceptrón - Visualizador</mat-card-title>
-  <mat-card-subtitle>
-    Puntos fijos de ejemplo, puedes jugar con W1, W2 y B.
-  </mat-card-subtitle>
+  <mat-card-title>Gráfico</mat-card-title>
+  <br />
 
   <mat-card-content>
     <div class="controls">
       <mat-form-field appearance="outline">
-        <mat-label>WX</mat-label>
+        <mat-label>Wx</mat-label>
         <input
           matInput
           type="number"
@@ -16,7 +16,7 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>WY</mat-label>
+        <mat-label>Wy</mat-label>
         <input
           matInput
           type="number"
@@ -25,7 +25,7 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>B</mat-label>
+        <mat-label>b</mat-label>
         <input
           matInput
           type="number"
@@ -36,14 +36,32 @@
       <mat-form-field appearance="outline">
         <mat-label>Bias en eje</mat-label>
         <mat-select [(ngModel)]="ejeBias">
-        <mat-option value="x">Usar B en X (B, 0)</mat-option>
-        <mat-option value="y">Usar B en Y (0, B)</mat-option>
+        <mat-option value="x">b en X</mat-option>
+        <mat-option value="y">b en Y</mat-option>
         </mat-select>
     </mat-form-field>
 
       <button mat-raised-button color="primary" (click)="onApply()">
         Actualizar
       </button>
+    </div>
+
+    <div class="status-bar">
+      <mat-chip-listbox>
+        @if (estadoCalculo === 'separados') {
+          <mat-chip>
+            Se logró separar (bias en eje {{ ejeBias.toUpperCase() }}) en {{ nroIteraciones }} iteracione(s).
+          </mat-chip>
+        } @else if (estadoCalculo === 'no_separados') {
+          <mat-chip>
+            No hay errores pero no se lograron separar con las rectas de bias en {{ nroIteraciones }} iteracione(s).
+          </mat-chip>
+        } @else if (estadoCalculo === 'alcanzo_limite') {
+          <mat-chip>
+            No se lograron separar hasta el límite de iteraciones.
+          </mat-chip>
+        }
+      </mat-chip-listbox>
     </div>
 
     <div class="chart-container">
