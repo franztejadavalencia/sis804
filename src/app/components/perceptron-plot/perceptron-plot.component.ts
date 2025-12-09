@@ -62,16 +62,22 @@ export class PerceptronPlotComponent implements OnChanges, OnInit {
   };
 
   ngOnInit(): void {
-    this.updateChart();
+    this.actualizarChart();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['points'] || changes['wX'] || changes['wY'] || changes['b'] || changes['ejeBias']) {
-      this.updateChart();
+    if (
+      changes['points'] 
+      || changes['wX'] 
+      || changes['wY'] 
+      || changes['b'] 
+      || changes['puntos'] 
+      || changes['ejeBias']) {
+      this.actualizarChart();
     }
   }
 
-  updateChart(): void {
+  actualizarChart(): void {
     const clase0 = this.puntos
       .filter((p) => p.t === 0)
       .map((p) => ({ x: p.x, y: p.y }));
@@ -85,34 +91,24 @@ export class PerceptronPlotComponent implements OnChanges, OnInit {
     const minY = -10;
     const maxY = 10;
 
-    // Pendiente de la recta perpendicular a W
-    // const m = -(this.wX / this.wY);
     let m = 0;
     if (this.wY !== 0) {
       m = -(this.wX / this.wY);
     }
 
-    // Recta perpendicular por el origen (B = 0): wX*x + wY*y = 0
-    // => y = m * x
     const lineaOrigen =  [
-    { x: minX, y: m * minX },
-    { x: maxX, y: m * maxX },
-  ];
+      { x: minX, y: m * minX },
+      { x: maxX, y: m * maxX },
+    ];
 
-    // Recta con bias real del perceptrón: wX*x + wY*y + b = 0
-    // => y = m*x - b/wY
     let lineaBias: { x: number; y: number }[];
     if (this.ejeBias === 'x') {
-      // Recta con pendiente m que pasa por (B, 0)
-      // y = m (x - B)
       const bx = this.b;
       lineaBias = [
         { x: minX, y: m * (minX - bx) },
         { x: maxX, y: m * (maxX - bx) },
       ];
     } else {
-      // Recta con pendiente m que pasa por (0, B)
-      // y = m x + B
       const by = this.b;
       lineaBias = [
         { x: minX, y: m * minX + by },
@@ -120,7 +116,6 @@ export class PerceptronPlotComponent implements OnChanges, OnInit {
       ];
     }
 
-    // Vector W desde el origen hasta (wX, wY)
     const wVector = [
       { x: 0, y: 0 },
       { x: this.wX, y: this.wY },
@@ -205,7 +200,7 @@ export class PerceptronPlotComponent implements OnChanges, OnInit {
     };
   }
 
-  onApply(): void {
-    this.updateChart();
+  onActualizar(): void {
+    this.actualizarChart();
   }
 }

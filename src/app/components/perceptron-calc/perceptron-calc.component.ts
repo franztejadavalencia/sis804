@@ -14,10 +14,14 @@ type Estados = '' | 'separados' | 'no_separados' | 'alcanzo_limite';
   styleUrl: './perceptron-calc.component.scss',
 })
 export class PerceptronCalcComponent {
-  cantPuntos = signal(2);
+  cantPuntos = signal(6);
   puntos = signal<Punto[]>([
-    { x: 2, y: 2, t: 0 },
-    { x: -2, y: -2, t: 1 },
+    { x: 1, y: -2, t: 0 },
+    { x: 2, y: 2, t: 1 },
+    { x: -2, y: 2, t: 1 },
+    { x: 1, y: -4, t: 1 },
+    { x: -3, y: -4, t: 1 },
+    { x: -4, y: 0, t: 1 },
   ]);
   primerMitadT = signal<0 | 1>(0);
   wXInput = signal<number | null>(null);
@@ -112,8 +116,8 @@ export class PerceptronCalcComponent {
   });
 
   private numeroRandom(): number {
-    const min = -4;
-    const max = 4;
+    const min = -7;
+    const max = 7;
     const n = Math.floor(Math.random() * (max - min + 1)) + min;
     return n;
   }
@@ -136,10 +140,6 @@ export class PerceptronCalcComponent {
     let estadoFinal: Estados = 'alcanzo_limite';
  
     const pts = this.paraGraficoPuntos();
-    if (pts.length === 0) {
-      alert('Debes ingresar puntos válidos para iniciar.');
-      return;
-    }
 
     if (wX === null || Number.isNaN(wX)) wX = this.numeroRandom();
     if (wY === null || Number.isNaN(wY)) wY = this.numeroRandom();
@@ -152,7 +152,6 @@ export class PerceptronCalcComponent {
     this.paraGraficoWX.set(wX);
     this.paraGraficoWY.set(wY);
     this.paraGraficoB.set(b);
-
 
     const hardlim = (n: number) => (n > 0 ? 1 : 0);
 
@@ -227,15 +226,13 @@ export class PerceptronCalcComponent {
       }
     }
 
-    // Queremos una separación estricta:
-    // todos t=1 a un lado, todos t=0 al otro lado
     const positivos1 = clase1.every((v) => v > 0);
     const negativos1 = clase1.every((v) => v < 0);
     const positivos0 = clase0.every((v) => v > 0);
     const negativos0 = clase0.every((v) => v < 0);
 
-    const condicion1 = positivos1 && negativos0; // t=1 arriba, t=0 abajo
-    const conficion2 = negativos1 && positivos0; // t=1 abajo, t=0 arriba
+    const condicion1 = positivos1 && negativos0; 
+    const conficion2 = negativos1 && positivos0; 
 
     return condicion1 || conficion2;
   }
